@@ -143,16 +143,23 @@ static const struct stm32f2_gpio_dsc ext_ram_fsmc_fmc_gpio[] = {
 
 #ifdef CONFIG_VIDEO_STM32F4_LTDC
 static const struct stm32f2_gpio_dsc ltdc_iomux[] = {
+
+//	/* LCD_DISP GPIO configuration */
+//	{STM32F2_GPIO_PORT_I, STM32F2_GPIO_PIN_12},
+//	/* LCD_BL_CTRL GPIO configuration */
+//	{STM32F2_GPIO_PORT_K, STM32F2_GPIO_PIN_3},
 	/* PI14 = LCD_CLK */
 	{STM32F2_GPIO_PORT_I, STM32F2_GPIO_PIN_14},
 	/* PK7  = LCD_DE */
 	{STM32F2_GPIO_PORT_K, STM32F2_GPIO_PIN_7},
 	/* PI12 = LCD_HSYNC */
-	{STM32F2_GPIO_PORT_I, STM32F2_GPIO_PIN_12},
+	{STM32F2_GPIO_PORT_I, STM32F2_GPIO_PIN_10},
 	/* PI13 = LCD_VSYNC */
-	{STM32F2_GPIO_PORT_I, STM32F2_GPIO_PIN_13},
+	{STM32F2_GPIO_PORT_I, STM32F2_GPIO_PIN_9},
+//	/* PI13 = LCD_INT */
+//	{STM32F2_GPIO_PORT_I, STM32F2_GPIO_PIN_13},
 	/* PJ12 = LCD_B0 */
-	{STM32F2_GPIO_PORT_J, STM32F2_GPIO_PIN_12},
+	{STM32F2_GPIO_PORT_E, STM32F2_GPIO_PIN_4},
 	/* PJ13 = LCD_B1 */
 	{STM32F2_GPIO_PORT_J, STM32F2_GPIO_PIN_13},
 	/* PJ14 = LCD_B2 */
@@ -160,7 +167,7 @@ static const struct stm32f2_gpio_dsc ltdc_iomux[] = {
 	/* PJ15 = LCD_B3 */
 	{STM32F2_GPIO_PORT_J, STM32F2_GPIO_PIN_15},
 	/* PK3  = LCD_B4 */
-	{STM32F2_GPIO_PORT_K, STM32F2_GPIO_PIN_3},
+	{STM32F2_GPIO_PORT_G, STM32F2_GPIO_PIN_12},
 	/* PK4  = LCD_B5 */
 	{STM32F2_GPIO_PORT_K, STM32F2_GPIO_PIN_4},
 	/* PK5  = LCD_B6 */
@@ -202,6 +209,19 @@ static const struct stm32f2_gpio_dsc ltdc_iomux[] = {
 };
 #endif /* CONFIG_VIDEO_STM32F4_LTDC */
 
+#ifdef CONFIG_VIDEO_STM32F4_LTDC
+static const struct stm32f2_gpio_dsc ltdc_io_[] = {
+
+	/* LCD_DISP GPIO configuration */
+	{STM32F2_GPIO_PORT_I, STM32F2_GPIO_PIN_12},
+	/* LCD_BL_CTRL GPIO configuration */
+	{STM32F2_GPIO_PORT_K, STM32F2_GPIO_PIN_3},
+//	/* PI13 = LCD_INT */
+//	{STM32F2_GPIO_PORT_I, STM32F2_GPIO_PIN_13},
+
+};
+#endif /* CONFIG_VIDEO_STM32F4_LTDC */
+
 /*
  * Init FMC/FSMC GPIOs based
  */
@@ -240,6 +260,13 @@ static int ltdc_setup_iomux(void)
 	for (i = 0; i < ARRAY_SIZE(ltdc_iomux); i++) {
 		rv = stm32f2_gpio_config(&ltdc_iomux[i],
 				STM32F2_GPIO_ROLE_LTDC);
+		if (rv)
+			break;
+	}
+
+	for (i = 0; i < ARRAY_SIZE(ltdc_io_); i++) {
+		rv = stm32f2_gpio_config(&ltdc_io_[i],
+				STM32F2_GPIO_ROLE_GPOUT);
 		if (rv)
 			break;
 	}

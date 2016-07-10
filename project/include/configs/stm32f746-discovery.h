@@ -309,7 +309,7 @@
 /*
  * Framebuffer configuration
  */
-#undef CONFIG_LCD
+#define CONFIG_LCD
 
 #ifdef CONFIG_LCD
 

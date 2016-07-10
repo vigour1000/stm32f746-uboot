@@ -111,43 +111,43 @@ static void fb_enable_panel(void *lcdbase, int bpp)
 
 	i = 0;
 
-	acc_h_bporch = CONFIG_STM32F4_LTDC_HSYNC_LEN +
-		CONFIG_STM32F4_LTDC_LEFT_MARGIN;
-	acc_v_bporch = CONFIG_STM32F4_LTDC_VSYNC_LEN +
-		CONFIG_STM32F4_LTDC_UPPER_MARGIN;
-	ltdc_writel(
-		(acc_h_bporch << 0) |
-		((acc_h_bporch + CONFIG_STM32F4_LTDC_XRES) << 16),
-		LTDC_LAYER_WHPCR(i));
-	ltdc_writel(
-		(acc_v_bporch << 0) |
-		((acc_v_bporch + CONFIG_STM32F4_LTDC_YRES) << 16),
-		LTDC_LAYER_WVPCR(i));
-
-	switch (bpp) {
-		case 24:
-			/* Set pixel format to RGB888 */
-			ltdc_writel(1, LTDC_LAYER_PFCR(i));
-			break;
-		case 32:
-			/* Set pixel format to ARGB8888 */
-			ltdc_writel(0, LTDC_LAYER_PFCR(i));
-			break;
-		default:
-			puts("ERROR: Unknown BPP for LCD\n");
-			return;
-	}
+//	acc_h_bporch = CONFIG_STM32F4_LTDC_HSYNC_LEN +
+//		CONFIG_STM32F4_LTDC_LEFT_MARGIN;
+//	acc_v_bporch = CONFIG_STM32F4_LTDC_VSYNC_LEN +
+//		CONFIG_STM32F4_LTDC_UPPER_MARGIN;
+//	ltdc_writel(
+//		(acc_h_bporch << 0) |
+//		((acc_h_bporch + CONFIG_STM32F4_LTDC_XRES) << 16),
+//		LTDC_LAYER_WHPCR(i));
+//	ltdc_writel(
+//		(acc_v_bporch << 0) |
+//		((acc_v_bporch + CONFIG_STM32F4_LTDC_YRES) << 16),
+//		LTDC_LAYER_WVPCR(i));
+//
+//	switch (bpp) {
+//		case 24:
+//			/* Set pixel format to RGB888 */
+//			ltdc_writel(1, LTDC_LAYER_PFCR(i));
+//			break;
+//		case 32:
+//			/* Set pixel format to ARGB8888 */
+//			ltdc_writel(0, LTDC_LAYER_PFCR(i));
+//			break;
+//		default:
+//			puts("ERROR: Unknown BPP for LCD\n");
+//			return;
+//	}
 
 	ltdc_writel((u32)lcdbase, LTDC_LAYER_CFBAR(i));
 
-	ltdc_writel(((CONFIG_STM32F4_LTDC_XRES * (bpp >> 3)) << 16) |
-		(CONFIG_STM32F4_LTDC_XRES * (bpp >> 3) + 7),
-		LTDC_LAYER_CFBLR(i));
-	ltdc_writel(CONFIG_STM32F4_LTDC_YRES, LTDC_LAYER_CFBLNR(i));
-
-	/* Enable layer */
-	ltdc_writel(ltdc_readl(LTDC_LAYER_CR(i)) | 1,
-		LTDC_LAYER_CR(i));
+//	ltdc_writel(((CONFIG_STM32F4_LTDC_XRES * (bpp >> 3)) << 16) |
+//		(CONFIG_STM32F4_LTDC_XRES * (bpp >> 3) + 7),
+//		LTDC_LAYER_CFBLR(i));
+//	ltdc_writel(CONFIG_STM32F4_LTDC_YRES, LTDC_LAYER_CFBLNR(i));
+//
+//	/* Enable layer */
+//	ltdc_writel(ltdc_readl(LTDC_LAYER_CR(i)) | 1,
+//		LTDC_LAYER_CR(i));
 }
 
 static void enable_lcdc(void)
@@ -173,10 +173,18 @@ void lcd_ctrl_init(void *lcdbase)
 		return;
 
 	/* Enable LCDC module */
-	STM32_RCC->apb2enr |= STM32_RCC_ENR_LTDCEN;
+//	STM32_RCC->apb2enr |= STM32_RCC_ENR_LTDCEN;
+	u32* APB2ENR;
+	APB2ENR = (u32*)(0x40023844);
+	*APB2ENR = 0x04000800;
+
 
 	/* Enable pixel clock */
-	sai_r_clk_enable();
+//	sai_r_clk_enable();
+	u32* PLLI2SCFGR;
+	PLLI2SCFGR = (u32*)(0x40023888);
+	*PLLI2SCFGR = 0x54003000;
+
 
 	disable_lcdc();
 
@@ -192,18 +200,18 @@ void lcd_ctrl_init(void *lcdbase)
 	ltdc_writel((acc_h_cycles << 16) | acc_v_cycles, LTDC_SSCR);
 
 	/* Sets Accumulated Back porch */
-	acc_h_cycles += CONFIG_STM32F4_LTDC_LEFT_MARGIN;
+	acc_h_cycles += 13u;//CONFIG_STM32F4_LTDC_LEFT_MARGIN;
 	acc_v_cycles += CONFIG_STM32F4_LTDC_UPPER_MARGIN;
 	ltdc_writel((acc_h_cycles << 16) | acc_v_cycles, LTDC_BPCR);
 
 	/* Sets Accumulated Active Width */
-	acc_h_cycles += CONFIG_STM32F4_LTDC_XRES;
-	acc_v_cycles += CONFIG_STM32F4_LTDC_YRES;
+	acc_h_cycles += 480u;//CONFIG_STM32F4_LTDC_XRES;
+	acc_v_cycles += 272u;//CONFIG_STM32F4_LTDC_YRES;
 	ltdc_writel((acc_h_cycles << 16) | acc_v_cycles, LTDC_AWCR);
 
 	/* Sets Total Width */
-	acc_h_cycles += CONFIG_STM32F4_LTDC_RIGHT_MARGIN;
-	acc_v_cycles += CONFIG_STM32F4_LTDC_LOWER_MARGIN;
+	acc_h_cycles += 32;//CONFIG_STM32F4_LTDC_RIGHT_MARGIN;
+	acc_v_cycles += 2;//CONFIG_STM32F4_LTDC_LOWER_MARGIN;
 	ltdc_writel((acc_h_cycles << 16) | acc_v_cycles, LTDC_TWCR);
 
 	/* Disable uncommon features of LTDC, and invert input pixclock */
@@ -212,6 +220,163 @@ void lcd_ctrl_init(void *lcdbase)
 	/* Set background color to black */
 	ltdc_writel(0, LTDC_BCCR);
 
+	u32* base_u32p;
+
+	/* SSCR */
+	base_u32p = (u32*) (0x40016808);
+	*base_u32p = 0x00280009;
+	/* BPCR */
+	base_u32p = (u32*) (0x4001680C);
+	*base_u32p = 0x0035000B;
+	/* AWCR */
+	base_u32p = (u32*) (0x40016810);
+	*base_u32p = 0x0215011B;
+	/* TWCR */
+	base_u32p = (u32*) (0x40016814);
+	*base_u32p = 0x0235011D;
+	/* GCR */
+	base_u32p = (u32*) (0x40016818);
+	*base_u32p = 0x00002221;
+	/* SRCR */
+	base_u32p = (u32*) (0x40016824);
+	*base_u32p = 0;
+	/* BCCR */
+	base_u32p = (u32*) (0x4001682C);
+	*base_u32p = 0;
+	/* IER */
+	base_u32p = (u32*) (0x40016834);
+	*base_u32p = 0x00000006;
+	/* ISR */
+	base_u32p = (u32*) (0x40016838);
+	*base_u32p = 0x00000006;
+	/* LIPCR */
+	base_u32p = (u32*) (0x40016840);
+	*base_u32p = 0;
+	/* L1CR */
+	base_u32p = (u32*) (0x40016884);
+	*base_u32p = 0x00000001;
+	/* L1WHPCR */
+	base_u32p = (u32*) (0x40016888);
+	*base_u32p = 0x02150036;
+	/* L1WVPCR */
+	base_u32p = (u32*) (0x4001688C);
+	*base_u32p = 0x011B000C;
+	/* L1BFCR */
+	base_u32p = (u32*) (0x400168A0);
+	*base_u32p = 0x00000607;
+	/* L1CFBAR */
+	base_u32p = (u32*) (0x400168AC);
+	*base_u32p = 0xC0000000;
+	/* L1CFBLR */
+	base_u32p = (u32*) (0x400168B0);
+	*base_u32p = 0x07800783;
+	/* L1CFBLR */
+	base_u32p = (u32*) (0x400168B4);
+	*base_u32p = 0x00000110;
+	/* L2CR */
+	base_u32p = (u32*) (0x40016904);
+	*base_u32p = 0x00000001;
+	/* L2WHPCR */
+	base_u32p = (u32*) (0x40016908);
+	*base_u32p = 0x02150036;
+	/* L2WVPCR */
+	base_u32p = (u32*) (0x4001690C);
+	*base_u32p = 0x011B000C;
+	/* L2CACR */
+	base_u32p = (u32*) (0x40016918);
+	*base_u32p = 0x00000064;
+	/* L2BFCR */
+	base_u32p = (u32*) (0x40016920);
+	*base_u32p = 0x00000607;
+	/* L2CFBAR */
+	base_u32p = (u32*) (0x4001692C);
+	*base_u32p = 0xC007F800;
+	/* L2CFBLR */
+	base_u32p = (u32*) (0x40016930);
+	*base_u32p = 0x07800783;
+	/* L2CFBLNR */
+	base_u32p = (u32*) (0x40016934);
+	*base_u32p = 0x00000110;
+
+
+//	///////////////////////111//////////
+//		u32* base_u32p;
+//
+//		base_u32p = (u32*) (0x40016800);
+//		base_u32p += 2;
+//		*base_u32p = 0x00280009;
+//		base_u32p++;
+//		*base_u32p = 0x0035000B;
+//	//////////////////////////////////////
+//		base_u32p = (u32*) (0x40016810);
+//		*base_u32p = 0x0215011B;
+//		base_u32p++;
+//		*base_u32p = 0x0235011D;
+//		base_u32p++;
+//		*base_u32p = 0x00002221;
+//		base_u32p++;
+//		*base_u32p = 0x6BE2D888;
+//	///////////////////////////////////
+//		base_u32p = (u32*) (0x40016820);
+//		*base_u32p = 0x00000020;
+//	///////////////////////////////////
+//		base_u32p = (u32*) (0x40016830);
+//		base_u32p++;
+//		*base_u32p = 0x00000006;
+//	///////////////////////////////////
+//		base_u32p = (u32*) (0x40016840);
+//		base_u32p++;
+//		*base_u32p = 0x013F00BA;
+//		///////////////////////////////////
+//		base_u32p = (u32*) (0x40016880);
+//		*base_u32p = 0xFF50A075;
+//		base_u32p++;
+//		*base_u32p = 0x00000001;
+//		base_u32p++;
+//		*base_u32p = 0x02150036;
+//		base_u32p++;
+//		*base_u32p = 0x011B000C;
+//		///////////////////////////////////
+//		base_u32p = (u32*) (0x400168A0);
+//		*base_u32p = 0x00000607;
+//		base_u32p += 3;
+//		*base_u32p = 0xC0000000;
+//		///////////////////////////////////
+//		base_u32p = (u32*) (0x400168B0);
+//		*base_u32p = 0x07800783;
+//		base_u32p++;
+//		*base_u32p = 0x00000110;
+
+
+
+
+
+//		///////////////////////////////////
+//		base_u32p = (u32*) (0x40016900);
+//		*base_u32p = 0xFF50A075;
+//		base_u32p++;
+//		*base_u32p = 0x00000001;
+//		base_u32p++;
+//		*base_u32p = 0x02150036;
+//		base_u32p++;
+//		*base_u32p = 0x011B000C;
+//		///////////////////////////////////
+//		base_u32p = (u32*) (0x40016910);
+//		base_u32p += 2;
+//		*base_u32p = 0x00000064;
+//		///////////////////////////////////
+//		base_u32p = (u32*) (0x40016920);
+//		*base_u32p = 0x00000607;
+//		base_u32p += 3;
+//		*base_u32p = 0xC007F800;
+//		///////////////////////////////////
+//		base_u32p = (u32*) (0x40016930);
+//		*base_u32p = 0x07800783;
+//		base_u32p ++;
+//		*base_u32p = 0x00000110;
+
+	/* Set background color to black */
+	ltdc_writel(0, LTDC_BCCR);
 
 	/* Enable the LCD controller */
 	enable_lcdc();
