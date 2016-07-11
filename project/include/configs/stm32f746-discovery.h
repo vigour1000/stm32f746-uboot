@@ -340,8 +340,8 @@
 # define CONFIG_STM32F4_LTDC_VSYNC_LEN		10
 # define CONFIG_STM32F4_LTDC_LOWER_MARGIN	2
 
-#elif defined(CONFIG_VIDEO_STM32F4_LTDC)
-# error "STM32F7 LTDC is enabled but no LCD configured"
+//#elif defined(CONFIG_VIDEO_STM32F4_LTDC)
+//# error "STM32F7 LTDC is enabled but no LCD configured"
 #endif
 
 #endif /* CONFIG_LCD */

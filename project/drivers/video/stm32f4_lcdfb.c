@@ -24,6 +24,7 @@
 #include <lcd.h>
 #include <asm/io.h>
 #include <asm/arch/stm32.h>
+#include <../../include/asm-arm/arch-stm32/stm32f2_gpio.h>
 
 vidinfo_t panel_info = {
 	vl_col:		CONFIG_STM32F4_LTDC_XRES,
@@ -188,37 +189,37 @@ void lcd_ctrl_init(void *lcdbase)
 
 	disable_lcdc();
 
-	/*
-	 * Accumulated cycles starting with back porch:
-	 *   sync_len - 1 + back_porch + resolution + front_porch
-	 * We substract one to simplify writing to registers.
-	 */
-	acc_h_cycles = CONFIG_STM32F4_LTDC_HSYNC_LEN - 1;
-	acc_v_cycles = CONFIG_STM32F4_LTDC_VSYNC_LEN - 1;
-
-	/* Sets Synchronization size */
-	ltdc_writel((acc_h_cycles << 16) | acc_v_cycles, LTDC_SSCR);
-
-	/* Sets Accumulated Back porch */
-	acc_h_cycles += 13u;//CONFIG_STM32F4_LTDC_LEFT_MARGIN;
-	acc_v_cycles += CONFIG_STM32F4_LTDC_UPPER_MARGIN;
-	ltdc_writel((acc_h_cycles << 16) | acc_v_cycles, LTDC_BPCR);
-
-	/* Sets Accumulated Active Width */
-	acc_h_cycles += 480u;//CONFIG_STM32F4_LTDC_XRES;
-	acc_v_cycles += 272u;//CONFIG_STM32F4_LTDC_YRES;
-	ltdc_writel((acc_h_cycles << 16) | acc_v_cycles, LTDC_AWCR);
-
-	/* Sets Total Width */
-	acc_h_cycles += 32;//CONFIG_STM32F4_LTDC_RIGHT_MARGIN;
-	acc_v_cycles += 2;//CONFIG_STM32F4_LTDC_LOWER_MARGIN;
-	ltdc_writel((acc_h_cycles << 16) | acc_v_cycles, LTDC_TWCR);
-
-	/* Disable uncommon features of LTDC, and invert input pixclock */
-	ltdc_writel((ltdc_readl(LTDC_GCR) & GCR_MASK) | (1 << 28), LTDC_GCR);
-
-	/* Set background color to black */
-	ltdc_writel(0, LTDC_BCCR);
+//	/*
+//	 * Accumulated cycles starting with back porch:
+//	 *   sync_len - 1 + back_porch + resolution + front_porch
+//	 * We substract one to simplify writing to registers.
+//	 */
+//	acc_h_cycles = CONFIG_STM32F4_LTDC_HSYNC_LEN - 1;
+//	acc_v_cycles = CONFIG_STM32F4_LTDC_VSYNC_LEN - 1;
+//
+//	/* Sets Synchronization size */
+//	ltdc_writel((acc_h_cycles << 16) | acc_v_cycles, LTDC_SSCR);
+//
+//	/* Sets Accumulated Back porch */
+//	acc_h_cycles += 13u;//CONFIG_STM32F4_LTDC_LEFT_MARGIN;
+//	acc_v_cycles += CONFIG_STM32F4_LTDC_UPPER_MARGIN;
+//	ltdc_writel((acc_h_cycles << 16) | acc_v_cycles, LTDC_BPCR);
+//
+//	/* Sets Accumulated Active Width */
+//	acc_h_cycles += 480u;//CONFIG_STM32F4_LTDC_XRES;
+//	acc_v_cycles += 272u;//CONFIG_STM32F4_LTDC_YRES;
+//	ltdc_writel((acc_h_cycles << 16) | acc_v_cycles, LTDC_AWCR);
+//
+//	/* Sets Total Width */
+//	acc_h_cycles += 32;//CONFIG_STM32F4_LTDC_RIGHT_MARGIN;
+//	acc_v_cycles += 2;//CONFIG_STM32F4_LTDC_LOWER_MARGIN;
+//	ltdc_writel((acc_h_cycles << 16) | acc_v_cycles, LTDC_TWCR);
+//
+//	/* Disable uncommon features of LTDC, and invert input pixclock */
+//	ltdc_writel((ltdc_readl(LTDC_GCR) & GCR_MASK) | (1 << 28), LTDC_GCR);
+//
+//	/* Set background color to black */
+//	ltdc_writel(0, LTDC_BCCR);
 
 	u32* base_u32p;
 
@@ -266,7 +267,7 @@ void lcd_ctrl_init(void *lcdbase)
 	*base_u32p = 0x00000607;
 	/* L1CFBAR */
 	base_u32p = (u32*) (0x400168AC);
-	*base_u32p = 0xC0000000;
+	*base_u32p = &lcd_base//0xC0000000;
 	/* L1CFBLR */
 	base_u32p = (u32*) (0x400168B0);
 	*base_u32p = 0x07800783;
@@ -299,92 +300,25 @@ void lcd_ctrl_init(void *lcdbase)
 	*base_u32p = 0x00000110;
 
 
-//	///////////////////////111//////////
-//		u32* base_u32p;
-//
-//		base_u32p = (u32*) (0x40016800);
-//		base_u32p += 2;
-//		*base_u32p = 0x00280009;
-//		base_u32p++;
-//		*base_u32p = 0x0035000B;
-//	//////////////////////////////////////
-//		base_u32p = (u32*) (0x40016810);
-//		*base_u32p = 0x0215011B;
-//		base_u32p++;
-//		*base_u32p = 0x0235011D;
-//		base_u32p++;
-//		*base_u32p = 0x00002221;
-//		base_u32p++;
-//		*base_u32p = 0x6BE2D888;
-//	///////////////////////////////////
-//		base_u32p = (u32*) (0x40016820);
-//		*base_u32p = 0x00000020;
-//	///////////////////////////////////
-//		base_u32p = (u32*) (0x40016830);
-//		base_u32p++;
-//		*base_u32p = 0x00000006;
-//	///////////////////////////////////
-//		base_u32p = (u32*) (0x40016840);
-//		base_u32p++;
-//		*base_u32p = 0x013F00BA;
-//		///////////////////////////////////
-//		base_u32p = (u32*) (0x40016880);
-//		*base_u32p = 0xFF50A075;
-//		base_u32p++;
-//		*base_u32p = 0x00000001;
-//		base_u32p++;
-//		*base_u32p = 0x02150036;
-//		base_u32p++;
-//		*base_u32p = 0x011B000C;
-//		///////////////////////////////////
-//		base_u32p = (u32*) (0x400168A0);
-//		*base_u32p = 0x00000607;
-//		base_u32p += 3;
-//		*base_u32p = 0xC0000000;
-//		///////////////////////////////////
-//		base_u32p = (u32*) (0x400168B0);
-//		*base_u32p = 0x07800783;
-//		base_u32p++;
-//		*base_u32p = 0x00000110;
-
-
-
-
-
-//		///////////////////////////////////
-//		base_u32p = (u32*) (0x40016900);
-//		*base_u32p = 0xFF50A075;
-//		base_u32p++;
-//		*base_u32p = 0x00000001;
-//		base_u32p++;
-//		*base_u32p = 0x02150036;
-//		base_u32p++;
-//		*base_u32p = 0x011B000C;
-//		///////////////////////////////////
-//		base_u32p = (u32*) (0x40016910);
-//		base_u32p += 2;
-//		*base_u32p = 0x00000064;
-//		///////////////////////////////////
-//		base_u32p = (u32*) (0x40016920);
-//		*base_u32p = 0x00000607;
-//		base_u32p += 3;
-//		*base_u32p = 0xC007F800;
-//		///////////////////////////////////
-//		base_u32p = (u32*) (0x40016930);
-//		*base_u32p = 0x07800783;
-//		base_u32p ++;
-//		*base_u32p = 0x00000110;
-
-	/* Set background color to black */
-	ltdc_writel(0, LTDC_BCCR);
+//	/* Set background color to black */
+//	ltdc_writel(0, LTDC_BCCR);
 
 	/* Enable the LCD controller */
 	enable_lcdc();
 
+
+	const struct stm32f2_gpio_dsc port_bl = {STM32F2_GPIO_PORT_K, STM32F2_GPIO_PIN_3};
+	stm32f2_gpout_set(&port_bl,1);
+
+	const struct stm32f2_gpio_dsc port_dis = {STM32F2_GPIO_PORT_I, STM32F2_GPIO_PIN_12};
+	stm32f2_gpout_set(&port_dis,1);
+
 	/* Enable layer 1 */
-	fb_enable_panel(lcdbase, NBITS(panel_info.vl_bpix));
+//	fb_enable_panel(lcdbase, NBITS(panel_info.vl_bpix));
 
 	ltdc_reload_config();
+
+
 }
 
 void lcd_setcolreg (ushort regno, ushort red, ushort green, ushort blue)
