@@ -249,31 +249,34 @@ void lcd_ctrl_init(void *lcdbase)
 	*base_u32p = 0x00000006;
 	/* ISR */
 	base_u32p = (u32*) (0x40016838);
-	*base_u32p = 0x00000006;
+	*base_u32p = 0x00000000;
 	/* LIPCR */
 	base_u32p = (u32*) (0x40016840);
 	*base_u32p = 0;
 	/* L1CR */
-	base_u32p = (u32*) (0x40016884);
-	*base_u32p = 0x00000001;
+//	base_u32p = (u32*) (0x40016884);
+//	*base_u32p = 0x00000001;
 	/* L1WHPCR */
-	base_u32p = (u32*) (0x40016888);
-	*base_u32p = 0x02150036;
+//	base_u32p = (u32*) (0x40016888);
+//	*base_u32p = 0x02150036;
 	/* L1WVPCR */
-	base_u32p = (u32*) (0x4001688C);
-	*base_u32p = 0x011B000C;
+//	base_u32p = (u32*) (0x4001688C);
+//	*base_u32p = 0x011B000C;
+	/* L1CACR */
+	base_u32p = (u32*) (0x40016898);
+	*base_u32p = 0x000000FF;
 	/* L1BFCR */
 	base_u32p = (u32*) (0x400168A0);
 	*base_u32p = 0x00000607;
-	/* L1CFBAR */
-	base_u32p = (u32*) (0x400168AC);
-	*base_u32p = &lcd_base;//0xC0000000;
-	/* L1CFBLR */
-	base_u32p = (u32*) (0x400168B0);
-	*base_u32p = 0x07800783;
-	/* L1CFBLR */
-	base_u32p = (u32*) (0x400168B4);
-	*base_u32p = 0x00000110;
+//	/* L1CFBAR */
+//	base_u32p = (u32*) (0x400168AC);
+//	*base_u32p = &lcd_base;//0xC0000000;
+//	/* L1CFBLR */
+//	base_u32p = (u32*) (0x400168B0);
+//	*base_u32p = 0x07800783;
+//	/* L1CFBLNR */
+//	base_u32p = (u32*) (0x400168B4);
+//	*base_u32p = 0x00000110;
 	/* L2CR */
 	base_u32p = (u32*) (0x40016904);
 	*base_u32p = 0x00000001;
@@ -285,7 +288,7 @@ void lcd_ctrl_init(void *lcdbase)
 	*base_u32p = 0x011B000C;
 	/* L2CACR */
 	base_u32p = (u32*) (0x40016918);
-	*base_u32p = 0x00000064;
+	*base_u32p = 0x000000FF;
 	/* L2BFCR */
 	base_u32p = (u32*) (0x40016920);
 	*base_u32p = 0x00000607;
