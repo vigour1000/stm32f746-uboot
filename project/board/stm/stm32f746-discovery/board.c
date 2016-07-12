@@ -144,10 +144,6 @@ static const struct stm32f2_gpio_dsc ext_ram_fsmc_fmc_gpio[] = {
 #ifdef CONFIG_VIDEO_STM32F4_LTDC
 static const struct stm32f2_gpio_dsc ltdc_iomux[] = {
 
-//	/* LCD_DISP GPIO configuration */
-//	{STM32F2_GPIO_PORT_I, STM32F2_GPIO_PIN_12},
-//	/* LCD_BL_CTRL GPIO configuration */
-//	{STM32F2_GPIO_PORT_K, STM32F2_GPIO_PIN_3},
 	/* PI14 = LCD_CLK */
 	{STM32F2_GPIO_PORT_I, STM32F2_GPIO_PIN_14},
 	/* PK7  = LCD_DE */
@@ -156,8 +152,8 @@ static const struct stm32f2_gpio_dsc ltdc_iomux[] = {
 	{STM32F2_GPIO_PORT_I, STM32F2_GPIO_PIN_10},
 	/* PI13 = LCD_VSYNC */
 	{STM32F2_GPIO_PORT_I, STM32F2_GPIO_PIN_9},
-//	/* PI13 = LCD_INT */
-//	{STM32F2_GPIO_PORT_I, STM32F2_GPIO_PIN_13},
+	/* PI13 = LCD_INT */
+	{STM32F2_GPIO_PORT_I, STM32F2_GPIO_PIN_13},
 	/* PJ12 = LCD_B0 */
 	{STM32F2_GPIO_PORT_E, STM32F2_GPIO_PIN_4},
 	/* PJ13 = LCD_B1 */
