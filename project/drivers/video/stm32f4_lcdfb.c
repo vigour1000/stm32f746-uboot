@@ -267,7 +267,7 @@ void lcd_ctrl_init(void *lcdbase)
 	*base_u32p = 0x00000607;
 	/* L1CFBAR */
 	base_u32p = (u32*) (0x400168AC);
-	*base_u32p = &lcd_base//0xC0000000;
+	*base_u32p = &lcd_base;//0xC0000000;
 	/* L1CFBLR */
 	base_u32p = (u32*) (0x400168B0);
 	*base_u32p = 0x07800783;
@@ -291,7 +291,7 @@ void lcd_ctrl_init(void *lcdbase)
 	*base_u32p = 0x00000607;
 	/* L2CFBAR */
 	base_u32p = (u32*) (0x4001692C);
-	*base_u32p = 0xC007F800;
+	*base_u32p = &lcd_base;//0xC007F800;
 	/* L2CFBLR */
 	base_u32p = (u32*) (0x40016930);
 	*base_u32p = 0x07800783;
