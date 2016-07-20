@@ -805,7 +805,7 @@ int stdio_init (void)
 	drv_lcd_init ();
 
 
-	lcd_display_bitmap(stlogo,100,100);
+	lcd_display_bitmap(stlogo,200,65);
 #endif
 #if defined(CONFIG_VIDEO) || defined(CONFIG_CFB_CONSOLE)
 	drv_video_init ();

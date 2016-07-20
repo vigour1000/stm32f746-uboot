@@ -203,7 +203,6 @@ s32 stm32f2_gpio_config(const struct stm32f2_gpio_dsc *dsc,
 		ospeed = STM32F2_GPIO_SPEED_50M;
 		pupd   = STM32F2_GPIO_PUPD_NO;
 		mode   = STM32F2_GPIO_MODE_AF;
-afr
 		break;
 	default:
 		if (gd->have_console)
