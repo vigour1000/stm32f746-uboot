@@ -174,10 +174,10 @@ void lcd_ctrl_init(void *lcdbase)
 		return;
 
 	/* Enable LCDC module */
-//	STM32_RCC->apb2enr |= STM32_RCC_ENR_LTDCEN;
-	u32* APB2ENR;
-	APB2ENR = (u32*)(0x40023844);
-	*APB2ENR = 0x04000800;
+	STM32_RCC->apb2enr |= STM32_RCC_ENR_LTDCEN;
+//	u32* APB2ENR;
+//	APB2ENR = (u32*)(0x40023844);
+//	*APB2ENR = 0x04000800;
 
 
 	/* Enable pixel clock */
